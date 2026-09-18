@@ -1,7 +1,7 @@
 {
   "title": "¿Quién es quién?",
-  "description": "Juego educativo de memoria y reconocimiento familiar, pensado para adultos mayores en fase temprana de Alzheimer. El jugador conoce a una pequeña familia (imagen, nombre, características y relaciones) y luego responde preguntas sencillas de selección múltiple sobre lo que aprendió.",
-  "authors": ["Moisés Acuña"],
+  "description": "Juego educativo de memoria y reconocimiento familiar, pensado para adultos mayores. El jugador conoce a una pequeña familia y responde preguntas sobre sus integrantes, características y relaciones.",
+  "authors": ["SALVADOR CORDOVA", "JONATHAN GUAINA"],
   "group_number": null,
   "controls": "Clic del mouse para navegar los menús y seleccionar respuestas. Tecla ENTER como apoyo para continuar tras responder una pregunta."
 }

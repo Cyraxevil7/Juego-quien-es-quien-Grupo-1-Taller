@@ -1,53 +1,71 @@
-"""Gestor de efectos de sonido del juego (clic, acierto, error).
+"""Gestor de efectos de sonido cargados desde assets externos.
 
-Se generan matemáticamente en tiempo de ejecución (ver
-``sintetizador.py``) en lugar de depender de archivos de audio externos
-cuya licencia habría que revisar. Todo el sonido es opcional: si el
-dispositivo del jugador no tiene salida de audio disponible, el juego
-sigue funcionando en silencio sin errores.
+Los efectos dejan de generarse proceduralmente. Cada sonido se carga
+como un recurso independiente para que el equipo pueda sustituirlo sin
+modificar la lógica del juego. El gestor encapsula la carga, volumen,
+estado de activación y reproducción.
 """
+
+import os
 
 try:
     import pygame
-except ImportError:  # pragma: no cover - pygame es una dependencia obligatoria
+except ImportError:  # pragma: no cover - pygame es dependencia obligatoria
     pygame = None
 
-from .sintetizador import FRECUENCIA_MUESTREO, generar_tono
+from .configuracion import (
+    RUTA_EFECTO_CLIC,
+    RUTA_EFECTO_CORRECTO,
+    RUTA_EFECTO_INCORRECTO,
+)
 
 
 class GestorAudio:
-    """Crea y reproduce los efectos de sonido del juego, respetando las
-    ``Opciones`` de volumen y activación."""
+    """Administra efectos de sonido reutilizables mediante composición."""
+
+    _RUTAS = {
+        "clic": RUTA_EFECTO_CLIC,
+        "correcto": RUTA_EFECTO_CORRECTO,
+        "incorrecto": RUTA_EFECTO_INCORRECTO,
+    }
 
     def __init__(self, opciones):
         self._opciones = opciones
         self._disponible = False
         self._sonidos = {}
-        self._inicializar()
+        self._cargar_assets()
 
-    def _inicializar(self):
+    def _cargar_assets(self):
         if pygame is None:
             return
+
         try:
             if not pygame.mixer.get_init():
-                pygame.mixer.init(frequency=FRECUENCIA_MUESTREO, size=-16, channels=1)
-            self._sonidos["clic"] = pygame.mixer.Sound(buffer=generar_tono(440, 60, 0.35))
-            self._sonidos["correcto"] = pygame.mixer.Sound(
-                buffer=generar_tono(660, 90, 0.4) + generar_tono(880, 120, 0.4)
-            )
-            self._sonidos["incorrecto"] = pygame.mixer.Sound(buffer=generar_tono(180, 220, 0.35))
-            self._disponible = True
+                pygame.mixer.init(frequency=44100, size=-16, channels=2)
+
+            for nombre, ruta in self._RUTAS.items():
+                if not os.path.isfile(ruta):
+                    continue
+                try:
+                    self._sonidos[nombre] = pygame.mixer.Sound(ruta)
+                except pygame.error:
+                    # Un archivo incorrecto no debe impedir que el juego abra.
+                    continue
+
+            self._disponible = bool(self._sonidos)
         except pygame.error:
-            # Sin dispositivo de audio disponible: el juego continúa en silencio.
             self._disponible = False
 
     def _reproducir(self, nombre):
         if not self._disponible or not self._opciones.efectos_activos:
             return
+
         sonido = self._sonidos.get(nombre)
-        if sonido is not None:
-            sonido.set_volume(self._opciones.volumen_efectos)
-            sonido.play()
+        if sonido is None:
+            return
+
+        sonido.set_volume(self._opciones.volumen_efectos)
+        sonido.play()
 
     def reproducir_clic(self):
         self._reproducir("clic")
@@ -57,3 +75,6 @@ class GestorAudio:
 
     def reproducir_incorrecto(self):
         self._reproducir("incorrecto")
+
+
+__all__ = ["GestorAudio"]
