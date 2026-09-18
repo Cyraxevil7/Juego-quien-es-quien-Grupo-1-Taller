@@ -1,4 +1,4 @@
-"""Pantalla de créditos: integrantes, materia, docente y recursos usados."""
+"""Pantalla de créditos: integrantes, materia, docente y recursos."""
 
 import pygame
 
@@ -19,14 +19,12 @@ from .pantalla import Pantalla
 from .boton import Boton
 from .utilidades import dibujar_texto_con_sombra, dibujar_panel
 
-# NOTA PARA EL EQUIPO: reemplacen estos datos de ejemplo por los reales
-# del grupo antes de entregar el proyecto.
-INTEGRANTES = ["Moisés Acuña"]
+INTEGRANTES = ["SALVADOR CORDOVA", "YONATHAN GUAINA"]
 MATERIA = "Objetos y Abstracción de Datos"
-DOCENTE = "[Nombre del/de la docente]"
+DOCENTE = "ING PLACIDO MALAVE"
 RECURSOS_EXTERNOS = [
     "Pygame (biblioteca libre, https://www.pygame.org)",
-    "Sonidos e imágenes generados por el propio programa (sin recursos externos)",
+    "Assets de imagen, música y efectos proporcionados y modificables por el equipo",
 ]
 
 
@@ -62,14 +60,20 @@ class PantallaCreditos(Pantalla):
         fuente_texto = self._juego.fuente("texto")
         fuente_pequena = self._juego.fuente("pequeno")
 
-        dibujar_texto_con_sombra(superficie, "Créditos", fuente_titulo, COLOR_TITULO, (ANCHO_VENTANA // 2, 100))
+        dibujar_texto_con_sombra(
+            superficie,
+            "Créditos",
+            fuente_titulo,
+            COLOR_TITULO,
+            (ANCHO_VENTANA // 2, 100),
+        )
 
         panel = pygame.Rect(0, 0, 760, 460)
         panel.center = (ANCHO_VENTANA // 2, 380)
         dibujar_panel(superficie, panel, COLOR_FONDO_PANEL, COLOR_BORDE)
 
         y = panel.top + 40
-        texto = fuente_texto.render("Integrantes:", True, COLOR_TEXTO)
+        texto = fuente_texto.render("Realizado por:", True, COLOR_TEXTO)
         superficie.blit(texto, (panel.left + 50, y))
         y += 40
         for nombre in INTEGRANTES:
@@ -85,7 +89,7 @@ class PantallaCreditos(Pantalla):
         superficie.blit(texto, (panel.left + 50, y))
 
         y += 56
-        texto = fuente_texto.render("Recursos externos utilizados:", True, COLOR_TEXTO)
+        texto = fuente_texto.render("Recursos utilizados:", True, COLOR_TEXTO)
         superficie.blit(texto, (panel.left + 50, y))
         y += 40
         for recurso in RECURSOS_EXTERNOS:

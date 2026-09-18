@@ -4,22 +4,17 @@ from abc import ABC, abstractmethod
 
 
 class Pantalla(ABC):
-    """Define el contrato común que deben cumplir todas las pantallas:
-    procesar eventos, actualizar su estado interno y dibujarse.
-
-    El juego llama siempre a estos mismos métodos sin importar qué
-    pantalla esté activa (polimorfismo), y cada subclase implementa el
-    comportamiento específico de su pantalla.
-    """
+    """Contrato común de todas las pantallas (polimorfismo)."""
 
     def __init__(self, juego):
         self._juego = juego
 
     def al_entrar(self):
-        """Se ejecuta cada vez que el juego cambia a esta pantalla.
-        Las subclases lo sobrescriben cuando necesitan reiniciar algo
-        (por ejemplo, la pantalla de pregunta debe olvidar la selección
-        anterior). Por defecto no hace nada."""
+        """Se ejecuta al activar la pantalla."""
+        pass
+
+    def al_cerrar(self):
+        """Permite liberar recursos exclusivos de una pantalla."""
         pass
 
     @abstractmethod
